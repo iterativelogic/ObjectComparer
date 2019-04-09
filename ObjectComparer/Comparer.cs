@@ -13,6 +13,14 @@ namespace ObjectComparer
     {
         public static bool AreSimilar<T>(T first, T second )
         {
+            var objectType = typeof(T);
+
+            if (objectType.IsValueType)
+            {
+                var valueTypeMatcher = TypeStateFactory.GetState<ValueTypeState>(first, second);
+                return valueTypeMatcher.AreEqual();
+            }
+
             var propertyState = new RefTypeState
             {
                 FirstObject = first,

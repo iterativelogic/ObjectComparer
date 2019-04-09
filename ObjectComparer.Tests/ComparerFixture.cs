@@ -25,7 +25,11 @@ namespace ObjectComparer.Tests
     [TestClass]
     public class ComparerFixture
     {
-
+        [TestMethod]
+        public void CompareValueTypePropery()
+        {
+            Assert.IsTrue(Comparer.AreSimilar(1234, 1234));
+        }
 
         [TestMethod]
         public void ComparePrimitiveTypeObjects()
