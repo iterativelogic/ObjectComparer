@@ -32,6 +32,12 @@ namespace ObjectComparer.Tests
         }
 
         [TestMethod]
+        public void CompareSimpleReferenceTypeObject()
+        {
+            Assert.IsTrue(Comparer.AreSimilar("Pranav", "Pranav"));
+        }
+
+        [TestMethod]
         public void ComparePrimitiveTypeObjects()
         {
             var circuit = new Person
