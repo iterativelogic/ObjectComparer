@@ -21,6 +21,20 @@ namespace ObjectComparer
                 return valueTypeMatcher.AreEqual();
             }
 
+            var enumerableType = typeof(IEnumerable<object>);
+
+            if (objectType.IsAssignableFrom(enumerableType))
+            {
+                var collectionTypeMatcher = TypeStateFactory.GetState<CollectionState>(first, second);
+                return collectionTypeMatcher.AreEqual();
+            }
+
+            if (objectType.IsClass)
+            {
+                var referenceTypeMatcher = TypeStateFactory.GetState<RefTypeState>(first, second);
+                return referenceTypeMatcher.AreEqual();
+            }
+
             var propertyState = new RefTypeState
             {
                 FirstObject = first,
