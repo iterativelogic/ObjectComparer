@@ -1,6 +1,6 @@
 ﻿namespace ObjectComparer
 {
-    public class ValueTypeState : PropertyState
+    public class ValueTypeStrategy : ComparisonStrategy
     {
         public override bool AreEqual()
         {

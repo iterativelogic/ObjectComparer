@@ -1,6 +1,6 @@
 ﻿namespace ObjectComparer
 {
-    public class PreviousObjectState : PropertyState
+    public class PreviousObjectStrategy : ComparisonStrategy
     {
         public override bool AreEqual()
         {

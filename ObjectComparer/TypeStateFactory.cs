@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ObjectComparer
 {
-    public class TypeStateFactory
+    public class ComparisonStrategyFactory
     {
-        public static PropertyState GetState<T>(object first, object second) where T : PropertyState, new()
+        public static ComparisonStrategy GetStrategy<T>(object first, object second) where T : ComparisonStrategy, new()
         {
             var state = new T();
 

@@ -17,7 +17,7 @@ namespace ObjectComparer
 
             if (objectType.IsValueType)
             {
-                var valueTypeMatcher = TypeStateFactory.GetState<ValueTypeState>(first, second);
+                var valueTypeMatcher = ComparisonStrategyFactory.GetStrategy<ValueTypeStrategy>(first, second);
                 return valueTypeMatcher.AreEqual();
             }
 
@@ -25,17 +25,17 @@ namespace ObjectComparer
 
             if (objectType.IsAssignableFrom(enumerableType))
             {
-                var collectionTypeMatcher = TypeStateFactory.GetState<CollectionState>(first, second);
+                var collectionTypeMatcher = ComparisonStrategyFactory.GetStrategy<CollectionStrategy>(first, second);
                 return collectionTypeMatcher.AreEqual();
             }
 
             if (objectType.IsClass)
             {
-                var referenceTypeMatcher = TypeStateFactory.GetState<RefTypeState>(first, second);
+                var referenceTypeMatcher = ComparisonStrategyFactory.GetStrategy<RefTypeStrategy>(first, second);
                 return referenceTypeMatcher.AreEqual();
             }
 
-            var propertyState = new RefTypeState
+            var propertyState = new RefTypeStrategy
             {
                 FirstObject = first,
                 SecondObject = second

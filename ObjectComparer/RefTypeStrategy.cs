@@ -5,17 +5,17 @@ using System.Reflection;
 
 namespace ObjectComparer
 {
-    public class RefTypeState : PropertyState
+    public class RefTypeStrategy : ComparisonStrategy
     {
-        public RefTypeState() : this(new HashSet<Type>()) { }
+        public RefTypeStrategy() : this(new HashSet<Type>()) { }
 
-        public RefTypeState(HashSet<Type> previousReferences)
+        public RefTypeStrategy(HashSet<Type> previousReferences)
         {
             PreviousReferences = previousReferences;
         }
 
         HashSet<Type> PreviousReferences { get; }
-        List<PropertyState> States { get; set; } = new List<PropertyState>();
+        List<ComparisonStrategy> States { get; set; } = new List<ComparisonStrategy>();
 
         public override bool AreEqual()
         {
@@ -40,7 +40,7 @@ namespace ObjectComparer
 
                 if (firstValue == null || secondValue == null)
                 {
-                    States.Add(new NullObjectState
+                    States.Add(new NullStrategy
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue
@@ -51,7 +51,7 @@ namespace ObjectComparer
 
                 if (IsPreviousReferenceProperty(propertyType))
                 {
-                    States.Add(new PreviousObjectState
+                    States.Add(new PreviousObjectStrategy
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue
@@ -62,7 +62,7 @@ namespace ObjectComparer
 
                 if (propertyType.IsValueType)
                 {
-                    States.Add(new ValueTypeState
+                    States.Add(new ValueTypeStrategy
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue
@@ -73,7 +73,7 @@ namespace ObjectComparer
 
                 if (enumerableType.IsAssignableFrom(propertyType))
                 {
-                    States.Add(new CollectionState
+                    States.Add(new CollectionStrategy
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue
@@ -86,7 +86,7 @@ namespace ObjectComparer
                 {
                     PreviousReferences.Add(objectType);
 
-                    States.Add(new RefTypeState(PreviousReferences)
+                    States.Add(new RefTypeStrategy(PreviousReferences)
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue

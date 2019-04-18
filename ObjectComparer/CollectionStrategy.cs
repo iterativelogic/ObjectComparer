@@ -2,7 +2,7 @@
 
 namespace ObjectComparer
 {
-    public class CollectionState : PropertyState
+    public class CollectionStrategy : ComparisonStrategy
     {
         public override bool AreEqual()
         {

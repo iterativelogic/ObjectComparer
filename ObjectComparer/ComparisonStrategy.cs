@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ObjectComparer
 {
-    public abstract class PropertyState
+    public abstract class ComparisonStrategy
     {
         public object FirstObject { get; set; }
         public object SecondObject { get; set; }
