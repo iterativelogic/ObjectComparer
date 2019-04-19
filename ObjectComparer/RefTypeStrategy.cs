@@ -15,7 +15,7 @@ namespace ObjectComparer
         }
 
         HashSet<Type> PreviousReferences { get; }
-        List<ComparisonStrategy> States { get; set; } = new List<ComparisonStrategy>();
+        List<ComparisonStrategy> Strategies { get; set; } = new List<ComparisonStrategy>();
 
         public override bool AreEqual()
         {
@@ -40,7 +40,7 @@ namespace ObjectComparer
 
                 if (firstValue == null || secondValue == null)
                 {
-                    States.Add(new NullStrategy
+                    Strategies.Add(new NullStrategy
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue
@@ -51,7 +51,7 @@ namespace ObjectComparer
 
                 if (IsPreviousReferenceProperty(propertyType))
                 {
-                    States.Add(new PreviousObjectStrategy
+                    Strategies.Add(new PreviousObjectStrategy
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue
@@ -62,7 +62,7 @@ namespace ObjectComparer
 
                 if (propertyType.IsValueType)
                 {
-                    States.Add(new ValueTypeStrategy
+                    Strategies.Add(new ValueTypeStrategy
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue
@@ -73,7 +73,7 @@ namespace ObjectComparer
 
                 if (enumerableType.IsAssignableFrom(propertyType))
                 {
-                    States.Add(new CollectionStrategy
+                    Strategies.Add(new CollectionStrategy
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue
@@ -86,7 +86,7 @@ namespace ObjectComparer
                 {
                     PreviousReferences.Add(objectType);
 
-                    States.Add(new RefTypeStrategy(PreviousReferences)
+                    Strategies.Add(new RefTypeStrategy(PreviousReferences)
                     {
                         FirstObject = firstValue,
                         SecondObject = secondValue
@@ -96,7 +96,7 @@ namespace ObjectComparer
                 }
             }
 
-            return States.All(x => x.AreEqual());
+            return Strategies.All(x => x.AreEqual());
         }
 
         private bool IsPreviousReferenceProperty(Type propertyType)

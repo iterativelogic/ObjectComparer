@@ -26,9 +26,15 @@ namespace ObjectComparer.Tests
     public class ComparerFixture
     {
         [TestMethod]
-        public void CompareValueTypePropery()
+        public void CompareValueTypePropery_ForSameObjects()
         {
             Assert.IsTrue(Comparer.AreSimilar(1234, 1234));
+        }
+
+        [TestMethod]
+        public void CompareValueTypeProperty_ForNotEqualObject()
+        {
+            Assert.IsFalse(Comparer.AreSimilar(1234, 2345));
         }
 
         [TestMethod]
@@ -74,6 +80,55 @@ namespace ObjectComparer.Tests
             Assert.IsTrue(Comparer.AreSimilar(circuit, munna));
         }
 
-       
+        [TestMethod]
+        public void CompareSameObjects()
+        {
+            var circuit = new Person
+            {
+                Childrens = new List<string> { "Short", "Circuit" },
+                Id = 1,
+                Name = "Circuit",
+                HasIdentity = true,
+                Address = new Address
+                {
+                    ApartmentName = "Shanti Kunj",
+                    FlatNo = 123,
+                    IsOccupied = true
+                }
+            };
+
+            var munna = new Person
+            {
+                Childrens = new List<string> { "Circuit", "Short" },
+                Id = 1,
+                Name = "Circuit",
+                HasIdentity = true,
+                Address = new Address
+                {
+                    ApartmentName = "Shanti Kunj",
+                    FlatNo = 123,
+                    IsOccupied = true
+                }
+            };
+
+            var rustam1 = new Person
+            {
+                Id = 123,
+                Name = "Rustam",
+                HasIdentity = true
+            };
+
+            var rustam2 = new Person
+            {
+                Id = 123,
+                Name = "Rustam",
+                HasIdentity = true
+            };
+
+            circuit.Address.BelongsTo = rustam1;
+            munna.Address.BelongsTo = rustam2;
+
+            Assert.IsTrue(Comparer.AreSimilar(circuit, munna));
+        }
     }
 }

@@ -4,7 +4,11 @@
     {
         public override bool AreEqual()
         {
-            return ReferenceEquals(FirstObject, SecondObject);
+            return ReferenceEquals(FirstObject, SecondObject) ? true : new RefTypeStrategy
+            {
+                FirstObject = FirstObject,
+                SecondObject = SecondObject
+            }.AreEqual();
         }
     }
 }
