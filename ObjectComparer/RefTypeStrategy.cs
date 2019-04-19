@@ -7,6 +7,8 @@ namespace ObjectComparer
 {
     public class RefTypeStrategy : ComparisonStrategy
     {
+        private readonly Type _enumerableType = typeof(IEnumerable<object>);
+
         public RefTypeStrategy() : this(new HashSet<Type>()) { }
 
         public RefTypeStrategy(HashSet<Type> previousReferences)
@@ -15,6 +17,7 @@ namespace ObjectComparer
         }
 
         HashSet<Type> PreviousReferences { get; }
+
         List<ComparisonStrategy> Strategies { get; set; } = new List<ComparisonStrategy>();
 
         public override bool AreEqual()
@@ -29,79 +32,29 @@ namespace ObjectComparer
             }
 
             var objectProperties = objectType.GetProperties();
-            var enumerableType = typeof(IEnumerable<object>);
-
+            
             foreach (var property in objectProperties)
             {
-                var propertyType = property.PropertyType;
-
-                var firstValue = property.GetValue(FirstObject);
-                var secondValue = property.GetValue(SecondObject);
-
-                if (firstValue == null || secondValue == null)
-                {
-                    Strategies.Add(new NullStrategy
-                    {
-                        FirstObject = firstValue,
-                        SecondObject = secondValue
-                    });
-
-                    continue;
-                }
-
-                if (IsPreviousReferenceProperty(propertyType))
-                {
-                    Strategies.Add(new PreviousObjectStrategy
-                    {
-                        FirstObject = firstValue,
-                        SecondObject = secondValue
-                    });
-
-                    continue;
-                }
-
-                if (propertyType.IsValueType)
-                {
-                    Strategies.Add(new ValueTypeStrategy
-                    {
-                        FirstObject = firstValue,
-                        SecondObject = secondValue
-                    });
-
-                    continue;
-                }
-
-                if (enumerableType.IsAssignableFrom(propertyType))
-                {
-                    Strategies.Add(new CollectionStrategy
-                    {
-                        FirstObject = firstValue,
-                        SecondObject = secondValue
-                    });
-
-                    continue;
-                }
-
-                if (propertyType.IsClass)
-                {
-                    PreviousReferences.Add(objectType);
-
-                    Strategies.Add(new RefTypeStrategy(PreviousReferences)
-                    {
-                        FirstObject = firstValue,
-                        SecondObject = secondValue
-                    });
-
-                    continue;
-                }
+                var comparisonStrategy = ComparisonStrategyFactory.GetStrategy(FirstObject, SecondObject, property, PreviousReferences);
+                Strategies.Add(comparisonStrategy);
+                
+                RecordPreviousReference(property.PropertyType, objectType);
             }
 
             return Strategies.All(x => x.AreEqual());
         }
 
-        private bool IsPreviousReferenceProperty(Type propertyType)
+        private void RecordPreviousReference(Type propertyType, Type objectType)
         {
-            return PreviousReferences.Any(type => type == propertyType);
+            if (_enumerableType.IsAssignableFrom(propertyType))
+            {
+                return;
+            }
+
+            if (propertyType.IsClass)
+            {
+                PreviousReferences.Add(objectType);
+            }            
         }
 
         private static MethodInfo GetEqualsMethod(Type objectType)

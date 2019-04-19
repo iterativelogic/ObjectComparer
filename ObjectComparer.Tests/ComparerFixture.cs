@@ -12,6 +12,11 @@ namespace ObjectComparer.Tests
         public string Name { get; set; }
         public bool HasIdentity { get; set; }
         public Address Address { get; set; }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 
     public class Address
@@ -20,6 +25,12 @@ namespace ObjectComparer.Tests
         public string ApartmentName { get; set; }
         public bool IsOccupied { get; set; }
         public Person BelongsTo { get; set; }
+    }
+
+    public class PersonIdentity
+    {
+        public int Id { get; set; }
+        public string SocialSecurity { get; set; }
     }
 
     [TestClass]
@@ -44,7 +55,116 @@ namespace ObjectComparer.Tests
         }
 
         [TestMethod]
-        public void ComparePrimitiveTypeObjects()
+        public void CompareSimpleValueTypeListThatAreEqual_Unordered()
+        {
+            var arr1 = new List<int> { 2, 5, 8 };
+            var arr2 = new List<int> { 5, 8, 2 };
+
+            Assert.IsTrue(Comparer.AreSimilar(arr1, arr2));
+        }
+
+        [TestMethod]
+        public void CompareSimpleRefTypeListThatAreEqual_Unordered()
+        {
+            var arr1 = new List<string> {"Pune", "Delhi", "Mumbai" };
+            var arr2 = new List<string> { "Delhi", "Mumbai", "Pune" };
+
+            Assert.IsTrue(Comparer.AreSimilar(arr1, arr2));
+        }
+
+        [TestMethod]
+        public void CompareSimpleValueTypeArrayThatAreEqual_Unordered()
+        {
+            var arr1 = new int[] { 2, 5, 8 };
+            var arr2 = new int[] { 5, 8, 2 };
+
+            Assert.IsTrue(Comparer.AreSimilar(arr1, arr2));
+        }
+
+        [TestMethod]
+        public void CompareSimpleRefTypeArrayThatAreEqual_Unordered()
+        {
+            var arr1 = new string[] { "Pune", "Delhi", "Mumbai" };
+            var arr2 = new string[] { "Delhi", "Mumbai", "Pune" };
+
+            Assert.IsTrue(Comparer.AreSimilar(arr1, arr2));
+        }
+
+        [TestMethod]
+        public void CompareCustomObject_SimilarCollection()
+        {
+            var personIdentity1 = new PersonIdentity
+            {
+                Id = 1,
+                SocialSecurity = "12345"
+            };
+
+            var personIdentity2 = new PersonIdentity
+            {
+                Id = 2,
+                SocialSecurity = "12345"
+            };
+
+
+            var col1 = new List<PersonIdentity> { personIdentity1, personIdentity2 };
+            var col2 = new List<PersonIdentity> { personIdentity2, personIdentity1 };
+
+            Assert.IsTrue(Comparer.AreSimilar(col1, col2));
+        }
+
+        [TestMethod]
+        public void CompareCustomObject_UnEqualCollection()
+        {
+            var personIdentity1 = new PersonIdentity
+            {
+                Id = 1,
+                SocialSecurity = "12345"
+            };
+
+            var personIdentity2 = new PersonIdentity
+            {
+                Id = 2,
+                SocialSecurity = "12345"
+            };
+
+            var personIdentity3 = new PersonIdentity
+            {
+                Id = 1,
+                SocialSecurity = "12345"
+            };
+
+            var personIdentity4 = new PersonIdentity
+            {
+                Id = 2,
+                SocialSecurity = "12345"
+            };
+            
+            var col1 = new List<PersonIdentity> { personIdentity1, personIdentity2, personIdentity3 };
+            var col2 = new List<PersonIdentity> { personIdentity2, personIdentity1, personIdentity4 };
+
+            //var col1 = new List<PersonIdentity> {
+            //    personIdentity1,
+            //    new PersonIdentity
+            //    {
+            //        Id = 1,
+            //        SocialSecurity = "1234"
+            //    }
+            //};
+
+            //var col2 = new List<PersonIdentity> {                
+            //    new PersonIdentity
+            //    {
+            //        Id = 1,
+            //        SocialSecurity = "1234"
+            //    },
+            //    personIdentity3
+            //};
+
+            Assert.IsFalse(Comparer.AreSimilar(col1, col2));
+        }
+
+        [TestMethod]
+        public void CompareComplexReferenceTypeObjects()
         {
             var circuit = new Person
             {
@@ -129,6 +249,40 @@ namespace ObjectComparer.Tests
             munna.Address.BelongsTo = rustam2;
 
             Assert.IsTrue(Comparer.AreSimilar(circuit, munna));
+        }
+
+        [TestMethod]
+        public void CompareComplexReferenceObjectCollection()
+        {
+            var personCollection1 = new List<Person>
+            {
+                new Person
+                {
+                    Id = 1,
+                    Name = "Pranav"
+                },
+                new Person
+                {
+                    Id = 1,
+                    Name = "Pranav"
+                }
+            };
+
+            var personCollection2 = new List<Person>
+            {
+                new Person
+                {
+                    Id = 1,
+                    Name = "Pranav"
+                },
+                new Person
+                {
+                    Id = 2,
+                    Name = "Pranav"
+                }
+            };
+
+            Assert.IsTrue(Comparer.AreSimilar(personCollection1, personCollection2));
         }
     }
 }

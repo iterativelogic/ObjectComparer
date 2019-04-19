@@ -46,10 +46,14 @@
     <Compile Include="ComparisonStrategy.cs" />
     <Compile Include="ComparisonStrategyFactory.cs" />
     <Compile Include="NullStrategy.cs" />
+    <Compile Include="ObjectEqualityComparer.cs" />
     <Compile Include="PreviousObjectStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefTypeStrategy.cs" />
     <Compile Include="ValueTypeStrategy.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

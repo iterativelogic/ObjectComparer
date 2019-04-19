@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace ObjectComparer
 {
@@ -6,10 +8,12 @@ namespace ObjectComparer
     {
         public override bool AreEqual()
         {
-            var firstCollection = (IEnumerable<object>)FirstObject;
-            var secondCollection = (IEnumerable<object>)SecondObject;
+            var equalityComparer = new ObjectEqualityComparer();
 
-            var collectionSet = new HashSet<object>(firstCollection, EqualityComparer<object>.Default);
+            var firstCollection = ((IEnumerable)FirstObject).Cast<object>();
+            var secondCollection = ((IEnumerable)SecondObject).Cast<object>();
+                       
+            var collectionSet = new HashSet<object>(firstCollection, equalityComparer);
 
             collectionSet.UnionWith(secondCollection);
             collectionSet.ExceptWith(secondCollection);
