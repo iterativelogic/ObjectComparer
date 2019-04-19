@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -12,10 +13,13 @@ namespace ObjectComparer.Tests
         public string Name { get; set; }
         public bool HasIdentity { get; set; }
         public Address Address { get; set; }
-
+        
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            var hashCode = 17;
+            hashCode = hashCode * 23 + Id.GetHashCode();
+            hashCode = hashCode *  23 + EqualityComparer<string>.Default.GetHashCode(Name);
+            return hashCode;
         }
     }
 
@@ -281,8 +285,8 @@ namespace ObjectComparer.Tests
                     Name = "Pranav"
                 }
             };
-
-            Assert.IsTrue(Comparer.AreSimilar(personCollection1, personCollection2));
+            
+            Assert.IsFalse(Comparer.AreSimilar(personCollection1, personCollection2));
         }
     }
 }

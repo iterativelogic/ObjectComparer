@@ -15,10 +15,7 @@ namespace ObjectComparer
                        
             var collectionSet = new HashSet<object>(firstCollection, equalityComparer);
 
-            collectionSet.UnionWith(secondCollection);
-            collectionSet.ExceptWith(secondCollection);
-
-            return collectionSet.Count == 0;
+            return collectionSet.SetEquals(secondCollection);
         }
     }
 }
